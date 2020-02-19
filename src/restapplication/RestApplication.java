@@ -9,13 +9,17 @@ package restapplication;
  *
  * @author informatica
  */
-public class RestApplication {
+public class RestApplication 
+{
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        // TODO code application logic here
+    public static void main(String[] args) 
+    {
+        GETMethod GET=new GETMethod();
+        POSTMethod POST=new POSTMethod(7,"Marco","Bianchi","marco.bianchi@prova.com","3325673435");
+        
     }
     
 }
