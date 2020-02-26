@@ -15,17 +15,19 @@ import java.net.URL;
  *
  * @author informatica
  */
-public class POSTMethod 
+public class PUTMethod 
 {
-    public POSTMethod(int id,String nome,String cognome,String email,String telefono)
+    public PUTMethod(int id,String nome,String cognome,String email,String telefono) 
     {
         try
         {
-            URL url = new URL("http://localhost:8080/api/tutorial/1.0/employees"); //connessione all'url fornito
+            String ID= String.valueOf(id); //conversione dell'ID intero in stringa 
+            URL url = new URL("http://localhost:8080/api/tutorial/1.0/employees/"+ID); //connessione all'url fornito --> inserimento dell'ID per avere le informazioni relative solo a quell'employee
             HttpURLConnection conn = (HttpURLConnection) url.openConnection(); //viene aperta la connessione 
-            conn.setDoOutput(true);
-            conn.setRequestMethod("POST"); //viene definito il metodo utilizzato
+            conn.setDoOutput(true); 
             conn.setRequestProperty("Content-Type", "application/json"); //viene definito il tipo di file che deve fornire in richiesta
+            conn.setRequestProperty("Accept", "application/json");  //viene definito il tipo di file che il server deve fornire in risposta
+            conn.setRequestMethod("PUT"); //viene definito il metodo utilizzato
             
             String body = "{\"employeeId\": " + id +",\"firstName\":\""+ nome + "\",\"lastName\":\"" + cognome + "\",\"email\":\"" + email + "\",\"phone\":\"" + telefono+ "\"}";
 
@@ -33,7 +35,7 @@ public class POSTMethod
             os.write(body.getBytes());
             os.flush();
             
-            if (conn.getResponseCode() != 201) //controlla se il codice della risposta è diverso da 201
+            if (conn.getResponseCode() != 200 && conn.getResponseCode() != 204) //controlla se il codice della risposta è diverso da 200
             {
                 if(conn.getResponseCode() == 401) //controlla se il codice della risposta è uguale a 401
                 {
@@ -41,7 +43,7 @@ public class POSTMethod
                 }
                 if(conn.getResponseCode() == 403) //controlla se il codice della risposta è uguale a 403
                 {
-                    System.out.println("ID employees già utilizzato");
+                    throw new RuntimeException("Forbidden: maybe you have to change the employee identification");
                 }
                 else
                 {
@@ -50,10 +52,13 @@ public class POSTMethod
             }
             else
             {
-                System.out.println("Inserimento riuscito!!");
+                if(conn.getResponseCode() == 200)
+                    System.out.println("Aggiornamento di un record intero riuscito!!");
+                else //se il codice è 204
+                    System.out.println("Impossibile modificare un record non esistente!!");
             }
-            conn.disconnect(); //chiusura della connessione
             
+            conn.disconnect(); //chiusura della connessione
         }
         catch (MalformedURLException e) 
         {
@@ -64,4 +69,5 @@ public class POSTMethod
             e.printStackTrace();
         }
     }
+    
 }
