@@ -83,7 +83,7 @@ public class RestApplication
                 default:
                     break;
             }
-        }while(input!="6");
+        }while(!input.equals("6"));
     }
     
 }
